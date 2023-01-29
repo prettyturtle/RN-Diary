@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "473460879898",
+    "project_id": "rn-diary-lecture",
+    "storage_bucket": "rn-diary-lecture.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473460879898:android:c44886d593976ebfca17a3",
+        "android_client_info": {
+          "package_name": "com.diary.rn.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "473460879898-l0qesojp1be205efjk19abjpajat7u4s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYIpxOS3aSRNzuDR2Zg3lQox4FXKeB_go"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "473460879898-l0qesojp1be205efjk19abjpajat7u4s.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "473460879898-7j7io08c5dlms7isucddjneavhib1eha.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rn-diary.ip"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
