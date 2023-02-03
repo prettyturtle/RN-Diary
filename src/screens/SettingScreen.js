@@ -7,10 +7,12 @@ import { stateUserInfo } from "../states/stateUserInfo"
 import Button from "../components/Button"
 import Spacer from "../components/Spacer"
 import Label from "../components/Label"
+import { useImagePickAndUpload } from "../hooks/useImagePickAndUpload"
 
 export const SettingScreen = () => {
   const navigation = useNavigation()
   const [userInfo] = useRecoilState(stateUserInfo)
+  const runImagePickAndUpload = useImagePickAndUpload(false)
 
   const onPressBack = () => {
     if (navigation.canGoBack()) {
@@ -18,7 +20,11 @@ export const SettingScreen = () => {
     }
   }
 
-  const onPressProfile = () => {}
+  const onPressProfile = async () => {
+    const result = await runImagePickAndUpload()
+
+    console.log(result)
+  }
 
   return (
     <View style={{ flex: 1 }}>
