@@ -8,10 +8,11 @@ import Button from "../components/Button"
 import Spacer from "../components/Spacer"
 import Label from "../components/Label"
 import { useImagePickAndUpload } from "../hooks/useImagePickAndUpload"
+import database from "@react-native-firebase/database"
 
 export const SettingScreen = () => {
   const navigation = useNavigation()
-  const [userInfo] = useRecoilState(stateUserInfo)
+  const [userInfo, setUserInfo] = useRecoilState(stateUserInfo)
   const runImagePickAndUpload = useImagePickAndUpload(false)
 
   const onPressBack = () => {
@@ -23,7 +24,18 @@ export const SettingScreen = () => {
   const onPressProfile = async () => {
     const result = await runImagePickAndUpload()
 
-    console.log(result)
+    if (result.length >= 1) {
+      const userDB = `/users/${userInfo.uid}`
+
+      setUserInfo((prevState) => {
+        return {
+          ...prevState,
+          profileImage: result[0],
+        }
+      })
+
+      await database().ref(userDB).update({ profileImage: result[0] })
+    }
   }
 
   return (
