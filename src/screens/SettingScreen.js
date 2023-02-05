@@ -9,6 +9,7 @@ import Spacer from "../components/Spacer"
 import Label from "../components/Label"
 import { useImagePickAndUpload } from "../hooks/useImagePickAndUpload"
 import database from "@react-native-firebase/database"
+import Icon from "../components/Icon"
 
 export const SettingScreen = () => {
   const navigation = useNavigation()
@@ -36,6 +37,16 @@ export const SettingScreen = () => {
 
       await database().ref(userDB).update({ profileImage: result[0] })
     }
+  }
+
+  const onPressAddPassword = () => {
+    navigation.push(NAVIGATION_NAME.ADD_PASSWORD)
+  }
+  const onPressClearPassword = async () => {
+    const userDB = `/users/${userInfo.uid}`
+    await database().ref(userDB).update({
+      password: "",
+    })
   }
 
   return (
@@ -66,6 +77,52 @@ export const SettingScreen = () => {
             />
           </Button>
         </View>
+        <Spacer spacing={20} />
+        <View
+          style={{
+            height: 0.4,
+            backgroundColor: "lightgrey",
+            marginHorizontal: 16,
+          }}
+        />
+        <Spacer spacing={20} />
+        <Button onPress={onPressAddPassword}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingVertical: 12,
+              paddingHorizontal: 24,
+            }}
+          >
+            <Label
+              fontSize={16}
+              text="비밀번호 추가"
+            />
+            <Icon
+              iconName="chevron-forward-outline"
+              size={16}
+            />
+          </View>
+        </Button>
+
+        <Button onPress={onPressClearPassword}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingVertical: 12,
+              paddingHorizontal: 24,
+            }}
+          >
+            <Label
+              fontSize={16}
+              text="비밀번호 초기화"
+            />
+          </View>
+        </Button>
       </View>
     </View>
   )

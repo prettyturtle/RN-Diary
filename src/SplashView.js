@@ -6,16 +6,21 @@ import {
 import auth from "@react-native-firebase/auth"
 import database from "@react-native-firebase/database"
 import { useEffect, useState } from "react"
-import { useSetRecoilState } from "recoil"
+import { useRecoilState, useSetRecoilState } from "recoil"
 import { stateUserInfo } from "./states/stateUserInfo"
 import { useGetDiaryList } from "./hooks/useGetDiaryList"
+import { PasswordInputBox } from "./components/PasswordInputBox"
 
 export const SplashView = (props) => {
+  const [loading, setLoading] = useState(false)
   const [showLoginButton, setShowLoginButton] = useState(false)
-  const setUserInfo = useSetRecoilState(stateUserInfo)
+  const [showPasswordInput, setShowPasswordInput] = useState(false)
+  const [inputPassword, setInputPassword] = useState("")
+  const [userInfo, setUserInfo] = useRecoilState(stateUserInfo)
   const runGetDiaryList = useGetDiaryList()
 
   const signInUserIdentify = async (idToken) => {
+    setLoading(true)
     const googleCredential = auth.GoogleAuthProvider.credential(idToken)
 
     const result = await auth().signInWithCredential(googleCredential)
@@ -28,8 +33,9 @@ export const SplashView = (props) => {
       .then((snapshot) => {
         return snapshot.val()
       })
-    console.log(userResult)
+
     const now = new Date().toISOString()
+
     if (userResult === null) {
       await database().ref(userDBRefKey).set({
         name: result.additionalUserInfo.profile.name,
@@ -39,10 +45,6 @@ export const SplashView = (props) => {
         createdAt: now,
         lastLoginAt: now,
       })
-    } else {
-      await database().ref(userDBRefKey).update({
-        lastLoginAt: now,
-      })
     }
 
     const userInfo = await database()
@@ -50,12 +52,22 @@ export const SplashView = (props) => {
       .once("value")
       .then((snapshot) => snapshot.val())
 
-    console.log("userInfo : ", userInfo)
-
     setUserInfo(userInfo)
     await runGetDiaryList(userInfo)
+
+    if (userInfo.password !== "") {
+      setShowPasswordInput(true)
+      setLoading(false)
+      return
+    }
+    await database().ref(userDBRefKey).update({
+      lastLoginAt: now,
+    })
+
+    setLoading(false)
     props.onFinishLoad()
   }
+
   const onPressGoogleLogin = async () => {
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true })
     const { idToken } = await GoogleSignin.signIn()
@@ -78,6 +90,24 @@ export const SplashView = (props) => {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       {showLoginButton && <GoogleSigninButton onPress={onPressGoogleLogin} />}
+      {showPasswordInput && (
+        <PasswordInputBox
+          value={inputPassword}
+          onChangeText={async (text) => {
+            setInputPassword(text)
+            if (text.length === 4) {
+              if (userInfo.password === text) {
+                const now = new Date().toISOString()
+                const userDB = `/users/${userInfo.uid}`
+                await database().ref(userDB).update({
+                  lastLoginAt: now,
+                })
+                props.onFinishLoad()
+              }
+            }
+          }}
+        />
+      )}
     </View>
   )
 }
