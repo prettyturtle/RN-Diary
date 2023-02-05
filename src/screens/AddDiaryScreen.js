@@ -62,6 +62,7 @@ export const AddDiaryScreen = () => {
       return
     }
     runCreateDiary(selectedPhotoUrl, selectedDate, title, content)
+    onPressBack()
   }
 
   return (

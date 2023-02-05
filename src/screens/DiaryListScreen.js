@@ -8,6 +8,8 @@ import Icon from "../components/Icon"
 import { useState } from "react"
 import Label from "../components/Label"
 import Spacer from "../components/Spacer"
+import { useRecoilValue } from "recoil"
+import { stateDiaryList } from "../states/stateDiaryList"
 
 export const DiaryListScreen = () => {
   const navigation = useNavigation()
@@ -26,34 +28,7 @@ export const DiaryListScreen = () => {
     navigation.push(NAVIGATION_NAME.DIARY_DETAIL, { item })
   }
 
-  const [data, setData] = useState([
-    {
-      id: 0,
-      title: "TITLE_01",
-      content: "CONTENT_01",
-      createdAt: "2022-01-01",
-      updatedAt: "2022-01-01",
-      imageUrl:
-        "https://fastly.picsum.photos/id/630/2560/1440.jpg?hmac=4LCCAezLuLF1k4ZUEDoa5VZHBdZWicj5qfKdrEOBi1k",
-    },
-    {
-      id: 1,
-      title: "TITLE_02",
-      content: "CONTENT_02",
-      createdAt: "2022-01-02",
-      updatedAt: "2022-01-02",
-      imageUrl:
-        "https://fastly.picsum.photos/id/630/2560/1440.jpg?hmac=4LCCAezLuLF1k4ZUEDoa5VZHBdZWicj5qfKdrEOBi1k",
-    },
-    {
-      id: 2,
-      title: "TITLE_03",
-      content: "CONTENT_03",
-      createdAt: "2022-01-03",
-      updatedAt: "2022-01-03",
-      imageUrl: null,
-    },
-  ])
+  const data = useRecoilValue(stateDiaryList)
 
   return (
     <View style={{ flex: 1 }}>
@@ -80,10 +55,10 @@ export const DiaryListScreen = () => {
             return (
               <Button onPress={() => onPressDetail(item)}>
                 <View style={{ paddingVertical: 12 }}>
-                  {item.imageUrl !== null && (
+                  {typeof item.photoUrl !== "undefined" && (
                     <>
                       <Image
-                        source={{ uri: item.imageUrl }}
+                        source={{ uri: item.photoUrl }}
                         style={{
                           width: width - 24 * 2,
                           height: (width - 24 * 2) * 0.5,
