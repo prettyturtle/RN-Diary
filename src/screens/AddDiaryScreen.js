@@ -8,9 +8,14 @@ import Spacer from "../components/Spacer"
 import { NAVIGATION_NAME } from "../Constant"
 import { useImagePickAndUpload } from "../hooks/useImagePickAndUpload"
 import DateTimePicker from "react-native-modal-datetime-picker"
+import { SingleLineInput } from "../components/SingleLineInput"
+import { MultiLineInput } from "../components/MultiLineInput"
+import { useCreateDiary } from "../hooks/useCreateDiary"
 
 export const AddDiaryScreen = () => {
   const { width } = useWindowDimensions()
+  const runCreateDiary = useCreateDiary()
+
   const photoSize = useMemo(() => {
     return {
       photoWidth: width,
@@ -22,6 +27,15 @@ export const AddDiaryScreen = () => {
   const runImagePickAndUpload = useImagePickAndUpload()
   const [visibleDatePicker, setVisibleDatePicker] = useState(false)
   const [selectedDate, setSelectedDate] = useState(null)
+  const [title, setTitle] = useState("")
+  const [content, setContent] = useState("")
+
+  const canSave = useMemo(() => {
+    if (selectedDate === null || title === "" || content === "") {
+      return false
+    }
+    return true
+  }, [selectedDate, title, content])
 
   const navigation = useNavigation()
 
@@ -41,6 +55,13 @@ export const AddDiaryScreen = () => {
 
   const onPressCalendar = () => {
     setVisibleDatePicker(true)
+  }
+
+  const onPressSave = () => {
+    if (!canSave) {
+      return
+    }
+    runCreateDiary(selectedPhotoUrl, selectedDate, title, content)
   }
 
   return (
@@ -103,6 +124,42 @@ export const AddDiaryScreen = () => {
             />
           </View>
         </Button>
+        <Spacer spacing={40} />
+        <View style={{ paddingHorizontal: 24 }}>
+          <SingleLineInput
+            value={title}
+            onChangeText={setTitle}
+            placeholder="제목을 입력해주세요..."
+          />
+        </View>
+        <Spacer spacing={20} />
+        <View style={{ paddingHorizontal: 24 }}>
+          <MultiLineInput
+            value={content}
+            onChangeText={setContent}
+            placeholder="내용을 입력해주세요..."
+          />
+        </View>
+        <Spacer spacing={40} />
+        <View style={{ paddingHorizontal: 24, marginBottom: 32 }}>
+          <Button onPress={onPressSave}>
+            <View
+              style={{
+                paddingVertical: 16,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: canSave ? "black" : "lightgrey",
+                borderRadius: 4,
+              }}
+            >
+              <Label
+                color={canSave ? "white" : "grey"}
+                fontSize={20}
+                text="등록하기"
+              />
+            </View>
+          </Button>
+        </View>
       </ScrollView>
 
       <DateTimePicker
