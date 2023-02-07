@@ -1,4 +1,4 @@
-import { View } from "react-native"
+import { ActivityIndicator, View } from "react-native"
 import {
   GoogleSignin,
   GoogleSigninButton,
@@ -17,6 +17,7 @@ export const SplashView = (props) => {
   const [showPasswordInput, setShowPasswordInput] = useState(false)
   const [inputPassword, setInputPassword] = useState("")
   const [userInfo, setUserInfo] = useRecoilState(stateUserInfo)
+  const [passwordError, setPasswordError] = useState(null)
   const runGetDiaryList = useGetDiaryList()
 
   const signInUserIdentify = async (idToken) => {
@@ -92,6 +93,7 @@ export const SplashView = (props) => {
       {showLoginButton && <GoogleSigninButton onPress={onPressGoogleLogin} />}
       {showPasswordInput && (
         <PasswordInputBox
+          errorMessage={passwordError}
           value={inputPassword}
           onChangeText={async (text) => {
             setInputPassword(text)
@@ -103,11 +105,15 @@ export const SplashView = (props) => {
                   lastLoginAt: now,
                 })
                 props.onFinishLoad()
+              } else {
+                setPasswordError("비밀번호가 다릅니다...")
+                setInputPassword("")
               }
             }
           }}
         />
       )}
+      {loading && <ActivityIndicator />}
     </View>
   )
 }

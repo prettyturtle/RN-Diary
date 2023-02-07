@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native"
 import { useEffect, useState } from "react"
 import { View } from "react-native"
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import Header from "../components/Header"
 import { PasswordInputBox } from "../components/PasswordInputBox"
 import { stateUserInfo } from "../states/stateUserInfo"
@@ -11,7 +11,8 @@ export const AddPasswordScreen = () => {
   const [firstInput, setFirstInput] = useState("")
   const [secondInput, setSecondInput] = useState("")
   const [isInputFirst, setIsInputFirst] = useState(true)
-  const userInfo = useRecoilValue(stateUserInfo)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [userInfo, setUserInfo] = useRecoilState(stateUserInfo)
 
   const navigation = useNavigation()
   const onPressBack = () => {
@@ -31,6 +32,13 @@ export const AddPasswordScreen = () => {
       password: firstInput,
     })
 
+    setUserInfo((prevState) => {
+      return {
+        ...prevState,
+        password: firstInput,
+      }
+    })
+
     onPressBack()
   }
 
@@ -44,6 +52,9 @@ export const AddPasswordScreen = () => {
     if (firstInput === secondInput) {
       //저장하기
       onCompleteInputPassword()
+    } else {
+      setErrorMessage("비밀번호가 다릅니다...")
+      setSecondInput("")
     }
   }, [firstInput, secondInput])
 
@@ -57,11 +68,14 @@ export const AddPasswordScreen = () => {
           />
         </Header.LeftGroup>
         <Header.CenterGroup>
-          <Header.Title title="비밀번호 추가" />
+          <Header.Title
+            title={userInfo.password !== "" ? "비밀번호 수정" : "비밀번호 추가"}
+          />
         </Header.CenterGroup>
       </Header>
       <View style={{ flex: 1, paddingTop: 32 }}>
         <PasswordInputBox
+          errorMessage={errorMessage}
           value={isInputFirst ? firstInput : secondInput}
           onChangeText={(text) => {
             if (isInputFirst) {
